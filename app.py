@@ -67,7 +67,7 @@ body_parts = {
     "right_leg": (mp_pose.PoseLandmark.RIGHT_HIP.value, mp_pose.PoseLandmark.RIGHT_ANKLE.value),
     "shoulders": (mp_pose.PoseLandmark.LEFT_SHOULDER.value, mp_pose.PoseLandmark.RIGHT_SHOULDER.value),
     "waist": (mp_pose.PoseLandmark.LEFT_HIP.value, mp_pose.PoseLandmark.RIGHT_HIP.value),
-    
+    "chest": (mp_pose.PoseLandmark.LEFT_SHOULDER.value, mp_pose.PoseLandmark.RIGHT_SHOULDER.value),
 }
 
 def get_body_measurements(image, person_height_feet, landmarks=None):
@@ -94,6 +94,12 @@ def draw_landmarks_and_measurements(image, landmarks, measurements, output_path,
         start_point = (int(landmarks[start_idx].x * width), int(landmarks[start_idx].y * height))
         end_point = (int(landmarks[end_idx].x * width), int(landmarks[end_idx].y * height))
         midpoint = ((start_point[0] + end_point[0]) // 2, (start_point[1] + end_point[1]) // 2)
+        if(part=="waist"):
+            midpoint = ((start_point[0] + end_point[0]) // 2, ((start_point[1] + end_point[1]) // 2)-8)
+        if(part=="chest"):
+            ratio=int(0.8*measurements["chest"])
+            midpoint = ((start_point[0] + end_point[0]) // 2, ((start_point[1] + end_point[1]) // 2)+ratio)
+        
         cv2.putText(image, label_measurements[part], midpoint, cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 0), 2)
 
     for part, (start_idx, end_idx) in body_parts.items():
@@ -110,7 +116,7 @@ def round_measurements(measurements):
 
 
 def precise_measurements(measurements):
-    processed_measurements = {}
+    processed_measurements = measurements
 
     # Calculate average for left and right arm together
     left_arm_average = (measurements["left_arm"] + measurements["right_arm"]) / 2
@@ -125,8 +131,6 @@ def precise_measurements(measurements):
     processed_measurements["right_arm"] = right_arm_average
     processed_measurements["left_leg"] = left_leg_average
     processed_measurements["right_leg"] = right_leg_average
-    processed_measurements["shoulders"] = measurements["shoulders"]
-    processed_measurements["waist"] = measurements["waist"]
 
     return processed_measurements
 
@@ -143,6 +147,7 @@ def convert_to_feet_and_inches(measurements):
 def add_estimated_measurements(measurements,height):
     estimated_measurements = measurements
     estimated_measurements["waist"]= measurements["waist"]*3.44
+    estimated_measurements["chest"]= measurements["shoulders"]*2.3
 
     return estimated_measurements
 

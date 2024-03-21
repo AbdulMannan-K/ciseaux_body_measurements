@@ -117,67 +117,77 @@ function App() {
               style={{ maxWidth: "25%", height: "auto", borderRadius: "8px" }}
             />
             {measurements &&
-            <div className="" style={{marginTop:'-2vh'}}>
-            <Container>
-              <h3>Measurements</h3>
-              <Row className="mb-3">
-                <Col>
-                  <Form.Label>Left Arm</Form.Label>
-                  <Form.Control
-                    type="text"
-                    value={measurements.left_arm}
-                    onChange={e => handleChange(e, "left_arm")}
-                  />
-                </Col>
-                <Col>
-                  <Form.Label>Right Arm</Form.Label>
-                  <Form.Control
-                    type="text"
-                    value={measurements.right_arm}
-                    onChange={e => handleChange(e, "right_arm")}
-                  />
-                </Col>
-              </Row>
-              <Row className="mb-3">
-                <Col>
-                  <Form.Label>Left Leg</Form.Label>
-                  <Form.Control
-                    type="text"
-                    value={measurements.left_leg}
-                    onChange={e => handleChange(e, "left_leg")}
-                  />
-                </Col>
-                <Col>
-                  <Form.Label>Right Leg</Form.Label>
-                  <Form.Control
-                    type="text"
-                    value={measurements.right_leg}
-                    onChange={e => handleChange(e, "right_leg")}
-                  />
-                </Col>
-              </Row>
-              <Row className="mb-3">
-                <Col>
-                  <Form.Label>Shoulders</Form.Label>
-                  <Form.Control
-                    type="text"
-                    value={measurements.shoulders}
-                    onChange={e => handleChange(e, "shoulders")}
-                  />
-                </Col>
-                <Col>
-                  <Form.Label>Waist</Form.Label>
-                  <Form.Control
-                    type="text"
-                    value={measurements.waist}
-                    onChange={e => handleChange(e, "waist")}
-                  />
-                </Col>
-              </Row>
-            </Container>
-          </div>
+              <div className="" style={{ marginTop: '-2vh' }}>
+                <Container>
+                  <h3>Measurements</h3>
+                  <Row className="mb-3">
+                    <Col>
+                      <Form.Label>Left Arm</Form.Label>
+                      <Form.Control
+                        type="text"
+                        value={measurements.left_arm}
+                        onChange={e => handleChange(e, "left_arm")}
+                      />
+                    </Col>
+                    <Col>
+                      <Form.Label>Right Arm</Form.Label>
+                      <Form.Control
+                        type="text"
+                        value={measurements.right_arm}
+                        onChange={e => handleChange(e, "right_arm")}
+                      />
+                    </Col>
+                  </Row>
+                  <Row className="mb-3">
+                    <Col>
+                      <Form.Label>Left Leg</Form.Label>
+                      <Form.Control
+                        type="text"
+                        value={measurements.left_leg}
+                        onChange={e => handleChange(e, "left_leg")}
+                      />
+                    </Col>
+                    <Col>
+                      <Form.Label>Right Leg</Form.Label>
+                      <Form.Control
+                        type="text"
+                        value={measurements.right_leg}
+                        onChange={e => handleChange(e, "right_leg")}
+                      />
+                    </Col>
+                  </Row>
+                  <Row className="mb-3">
+                    <Col>
+                      <Form.Label>Shoulders</Form.Label>
+                      <Form.Control
+                        type="text"
+                        value={measurements.shoulders}
+                        onChange={e => handleChange(e, "shoulders")}
+                      />
+                    </Col>
+                    <Col>
+                      <Form.Label>Chest</Form.Label>
+                      <Form.Control
+                        type="text"
+                        value={measurements.chest}
+                        onChange={e => handleChange(e, "chest")}
+                      />
+                    </Col>
+                  </Row>
+                  <Row className="mb-3">
+                    <Col>
+                      <Form.Label>Waist</Form.Label>
+                      <Form.Control
+                        type="text"
+                        value={measurements.waist}
+                        onChange={e => handleChange(e, "waist")}
+                      />
+                    </Col>
+                  </Row>
+                </Container>
+              </div>
             }
-            
+
           </div>
         </div>
       )}
