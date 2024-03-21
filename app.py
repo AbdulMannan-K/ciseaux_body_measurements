@@ -39,7 +39,8 @@ def get_landmarks_from_video(video_path, nth_frame=10):
 
             if results.pose_landmarks:
                 landmarks_list.append(results.pose_landmarks)
-
+            else:
+                print("Not found!!!!!!!!!11")
     cap.release()
     return landmarks_list
 
@@ -65,7 +66,7 @@ body_parts = {
     "left_leg": (mp_pose.PoseLandmark.LEFT_HIP.value, mp_pose.PoseLandmark.LEFT_ANKLE.value),
     "right_leg": (mp_pose.PoseLandmark.RIGHT_HIP.value, mp_pose.PoseLandmark.RIGHT_ANKLE.value),
     "shoulders": (mp_pose.PoseLandmark.LEFT_SHOULDER.value, mp_pose.PoseLandmark.RIGHT_SHOULDER.value),
-    # "waist": (mp_pose.PoseLandmark.LEFT_HIP.value, mp_pose.PoseLandmark.RIGHT_HIP.value),
+    "waist": (mp_pose.PoseLandmark.LEFT_HIP.value, mp_pose.PoseLandmark.RIGHT_HIP.value),
     
 }
 
@@ -125,6 +126,7 @@ def precise_measurements(measurements):
     processed_measurements["left_leg"] = left_leg_average
     processed_measurements["right_leg"] = right_leg_average
     processed_measurements["shoulders"] = measurements["shoulders"]
+    processed_measurements["waist"] = measurements["waist"]
 
     return processed_measurements
 
@@ -138,6 +140,11 @@ def convert_to_feet_and_inches(measurements):
 
     return converted_measurements
 
+def add_estimated_measurements(measurements,height):
+    estimated_measurements = measurements
+    estimated_measurements["waist"]= measurements["waist"]*3.44
+
+    return estimated_measurements
 
 def print_pose_landmark_info():
     print("Pose Landmark Information:")
@@ -145,6 +152,7 @@ def print_pose_landmark_info():
         print(f"Name: {landmark.name}")
         print(f"Value: {landmark.value}")
         print()
+
 
 
 @app.route('/process_video', methods=['POST'])
@@ -172,6 +180,7 @@ def process_video():
 
     person_height_feet = height
     measurements = get_body_measurements(first_frame, person_height_feet, avg_landmarks)
+    measurements=add_estimated_measurements(measurements,person_height_feet)
     measurements=precise_measurements(measurements)
     measurements=round_measurements(measurements)
     labe_measurements=convert_to_feet_and_inches(measurements)

@@ -165,6 +165,14 @@ function App() {
                     onChange={e => handleChange(e, "shoulders")}
                   />
                 </Col>
+                <Col>
+                  <Form.Label>Waist</Form.Label>
+                  <Form.Control
+                    type="text"
+                    value={measurements.waist}
+                    onChange={e => handleChange(e, "waist")}
+                  />
+                </Col>
               </Row>
             </Container>
           </div>
