@@ -65,6 +65,8 @@ body_parts = {
     "left_leg": (mp_pose.PoseLandmark.LEFT_HIP.value, mp_pose.PoseLandmark.LEFT_ANKLE.value),
     "right_leg": (mp_pose.PoseLandmark.RIGHT_HIP.value, mp_pose.PoseLandmark.RIGHT_ANKLE.value),
     "shoulders": (mp_pose.PoseLandmark.LEFT_SHOULDER.value, mp_pose.PoseLandmark.RIGHT_SHOULDER.value),
+    # "waist": (mp_pose.PoseLandmark.LEFT_HIP.value, mp_pose.PoseLandmark.RIGHT_HIP.value),
+    
 }
 
 def get_body_measurements(image, person_height_feet, landmarks=None):
@@ -76,7 +78,9 @@ def get_body_measurements(image, person_height_feet, landmarks=None):
     pixel_lengths = {part: calculate_distance(landmarks[start_idx], landmarks[end_idx]) for part, (start_idx, end_idx) in body_parts.items()}
 
     person_height_inches = person_height_feet * 12
-    conversion_factor = person_height_inches / (calculate_distance(landmarks[mp_pose.PoseLandmark.LEFT_ANKLE.value], landmarks[mp_pose.PoseLandmark.LEFT_EYE.value]))
+    diste=calculate_distance(landmarks[mp_pose.PoseLandmark.LEFT_ANKLE.value], landmarks[mp_pose.PoseLandmark.LEFT_EYE.value])
+    diste=diste+0.1*person_height_inches
+    conversion_factor = person_height_inches / diste
 
     real_world_lengths = {part: pixel_length * conversion_factor for part, pixel_length in pixel_lengths.items()}
     return real_world_lengths
@@ -135,6 +139,13 @@ def convert_to_feet_and_inches(measurements):
     return converted_measurements
 
 
+def print_pose_landmark_info():
+    print("Pose Landmark Information:")
+    for landmark in mp_pose.PoseLandmark:
+        print(f"Name: {landmark.name}")
+        print(f"Value: {landmark.value}")
+        print()
+
 
 @app.route('/process_video', methods=['POST'])
 def process_video():
@@ -165,7 +176,6 @@ def process_video():
     measurements=round_measurements(measurements)
     labe_measurements=convert_to_feet_and_inches(measurements)
     print(labe_measurements)
-
     ref_image_path = 'ref_image.jpg'
     cv2.imwrite(ref_image_path, first_frame)
     
