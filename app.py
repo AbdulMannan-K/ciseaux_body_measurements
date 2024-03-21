@@ -81,7 +81,7 @@ def get_body_measurements(image, person_height_feet, landmarks=None):
     real_world_lengths = {part: pixel_length * conversion_factor for part, pixel_length in pixel_lengths.items()}
     return real_world_lengths
 
-def draw_landmarks_and_measurements(image, landmarks, measurements, output_path):
+def draw_landmarks_and_measurements(image, landmarks, measurements, output_path,label_measurements):
     image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     height, width, _ = image.shape
 
@@ -89,7 +89,7 @@ def draw_landmarks_and_measurements(image, landmarks, measurements, output_path)
         start_point = (int(landmarks[start_idx].x * width), int(landmarks[start_idx].y * height))
         end_point = (int(landmarks[end_idx].x * width), int(landmarks[end_idx].y * height))
         midpoint = ((start_point[0] + end_point[0]) // 2, (start_point[1] + end_point[1]) // 2)
-        cv2.putText(image, f"{measurements[part]:.2f}", midpoint, cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 0), 2)
+        cv2.putText(image, label_measurements[part], midpoint, cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 0), 2)
 
     for part, (start_idx, end_idx) in body_parts.items():
         draw_measurement(part, start_idx, end_idx)
@@ -103,13 +103,49 @@ def round_measurements(measurements):
         rounded_measurements[key] = round(value, 2)
     return rounded_measurements
 
+
+def precise_measurements(measurements):
+    processed_measurements = {}
+
+    # Calculate average for left and right arm together
+    left_arm_average = (measurements["left_arm"] + measurements["right_arm"]) / 2
+    right_arm_average = (measurements["left_arm"] + measurements["right_arm"]) / 2
+
+    # Calculate average for left and right leg together
+    left_leg_average = (measurements["left_leg"] + measurements["right_leg"]) / 2
+    right_leg_average = (measurements["left_leg"] + measurements["right_leg"]) / 2
+
+    # Update processed measurements
+    processed_measurements["left_arm"] = left_arm_average
+    processed_measurements["right_arm"] = right_arm_average
+    processed_measurements["left_leg"] = left_leg_average
+    processed_measurements["right_leg"] = right_leg_average
+    processed_measurements["shoulders"] = measurements["shoulders"]
+
+    return processed_measurements
+
+def convert_to_feet_and_inches(measurements):
+    converted_measurements = {}
+
+    for key, value in measurements.items():
+        feet = int(value)
+        inches = int((value - feet) * 12)
+        converted_measurements[key] = f"{feet}'{inches}''"
+
+    return converted_measurements
+
+
+
 @app.route('/process_video', methods=['POST'])
 def process_video():
-    print("RECEVED WORKING")
+    print("Processing Video...")
     if 'video' not in request.files:
         return jsonify({'error': 'No video file provided'}), 400
 
     video_file = request.files['video']
+    height = float(request.form.get('height'))
+
+    print(height)    
     video_path = 'uploaded_video.mp4'
     video_file.save(video_path)
 
@@ -123,10 +159,12 @@ def process_video():
     if not ret:
         return jsonify({'error': 'Error reading the first frame from the video'}), 500
 
-    person_height_feet = 5.8333
+    person_height_feet = height
     measurements = get_body_measurements(first_frame, person_height_feet, avg_landmarks)
-    measurements=round_measurements(measurements )
-    print(measurements)
+    measurements=precise_measurements(measurements)
+    measurements=round_measurements(measurements)
+    labe_measurements=convert_to_feet_and_inches(measurements)
+    print(labe_measurements)
 
     ref_image_path = 'ref_image.jpg'
     cv2.imwrite(ref_image_path, first_frame)
@@ -134,9 +172,10 @@ def process_video():
     unique_id = str(uuid.uuid4())[:8]  
 
     output_image_path = f'output_image_{unique_id}.jpg'  
-    draw_landmarks_and_measurements(first_frame, avg_landmarks, measurements, "result_images/"+output_image_path)
+    draw_landmarks_and_measurements(first_frame, avg_landmarks, measurements, "result_images/"+output_image_path, labe_measurements)
+    
     os.remove(video_path)
-    return jsonify({'measurements': measurements, 'output_image_path': output_image_path})
+    return jsonify({'measurements': labe_measurements, 'output_image_path': output_image_path})
 
 
 

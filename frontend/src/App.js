@@ -49,9 +49,6 @@ function App() {
       console.error(error.message);
     }
   };
-  if (measurements) {
-    console.log(measurements)
-  }
   function generateHeights() {
     const heights = [];
     for (let feet = 5; feet <= 6; feet++) {
@@ -81,7 +78,6 @@ function App() {
     return totalFeet;
   }
 
-  console.log(height)
 
   return (
     <div className='container'>
@@ -128,7 +124,7 @@ function App() {
                 <Col>
                   <Form.Label>Left Arm</Form.Label>
                   <Form.Control
-                    type="number"
+                    type="text"
                     value={measurements.left_arm}
                     onChange={e => handleChange(e, "left_arm")}
                   />
@@ -136,7 +132,7 @@ function App() {
                 <Col>
                   <Form.Label>Right Arm</Form.Label>
                   <Form.Control
-                    type="number"
+                    type="text"
                     value={measurements.right_arm}
                     onChange={e => handleChange(e, "right_arm")}
                   />
@@ -146,7 +142,7 @@ function App() {
                 <Col>
                   <Form.Label>Left Leg</Form.Label>
                   <Form.Control
-                    type="number"
+                    type="text"
                     value={measurements.left_leg}
                     onChange={e => handleChange(e, "left_leg")}
                   />
@@ -154,7 +150,7 @@ function App() {
                 <Col>
                   <Form.Label>Right Leg</Form.Label>
                   <Form.Control
-                    type="number"
+                    type="text"
                     value={measurements.right_leg}
                     onChange={e => handleChange(e, "right_leg")}
                   />
@@ -164,7 +160,7 @@ function App() {
                 <Col>
                   <Form.Label>Shoulders</Form.Label>
                   <Form.Control
-                    type="number"
+                    type="text"
                     value={measurements.shoulders}
                     onChange={e => handleChange(e, "shoulders")}
                   />
