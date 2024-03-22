@@ -66,6 +66,7 @@ body_parts = {
     "left_leg": (mp_pose.PoseLandmark.LEFT_HIP.value, mp_pose.PoseLandmark.LEFT_ANKLE.value),
     "right_leg": (mp_pose.PoseLandmark.RIGHT_HIP.value, mp_pose.PoseLandmark.RIGHT_ANKLE.value),
     "shoulders": (mp_pose.PoseLandmark.LEFT_SHOULDER.value, mp_pose.PoseLandmark.RIGHT_SHOULDER.value),
+    "neck": (mp_pose.PoseLandmark.LEFT_SHOULDER.value, mp_pose.PoseLandmark.RIGHT_SHOULDER.value),
     "waist": (mp_pose.PoseLandmark.LEFT_HIP.value, mp_pose.PoseLandmark.RIGHT_HIP.value),
     "chest": (mp_pose.PoseLandmark.LEFT_SHOULDER.value, mp_pose.PoseLandmark.RIGHT_SHOULDER.value),
 }
@@ -99,6 +100,9 @@ def draw_landmarks_and_measurements(image, landmarks, measurements, output_path,
         if(part=="chest"):
             ratio=int(0.8*measurements["chest"])
             midpoint = ((start_point[0] + end_point[0]) // 2, ((start_point[1] + end_point[1]) // 2)+ratio)
+        if(part=="neck"):
+            ratio=int(1.5*measurements["shoulders"])
+            midpoint = ((start_point[0] + end_point[0]) // 2, ((start_point[1] + end_point[1]) // 2)-ratio)
         
         cv2.putText(image, label_measurements[part], midpoint, cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 0), 2)
 
@@ -148,6 +152,7 @@ def add_estimated_measurements(measurements,height):
     estimated_measurements = measurements
     estimated_measurements["waist"]= measurements["waist"]*3.44
     estimated_measurements["chest"]= measurements["shoulders"]*2.3
+    estimated_measurements["neck"]= measurements["shoulders"]*0.8
 
     return estimated_measurements
 
