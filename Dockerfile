@@ -1,12 +1,14 @@
-FROM python:3.11.8-alpine
+FROM python:3.11.1
 
-RUN apk add --no-cache \
-    build-base \
+# Install OS dependencies
+RUN apt-get update && apt-get install -y \
+    build-essential \
     libffi-dev \
-    musl-dev \
-    openblas-dev \
+    libopenblas-dev \
     gfortran \
-    python3-dev
+    python3-dev \
+    libgl1-mesa-glx \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
